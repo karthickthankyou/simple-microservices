@@ -25,7 +25,7 @@ app.post('/posts/:id/comments', async (req, res) => {
     const { id: postId } = req.params
     const id = randomBytes(4).toString('hex')
     const { text } = req.body
-    const data = { id, text, postId }
+    const data = { id, text, postId, status: 'pending' }
     comments.push(data)
 
     await axios.post('http://localhost:5000/events', {
@@ -36,11 +36,23 @@ app.post('/posts/:id/comments', async (req, res) => {
 
 })
 
-app.post('/events', (req, res) => {
-    // console.log(req.body)
+app.post('/events', async (req, res) => {
+    const { type, data } = req.body
+    switch (type) {
+        case 'comment_moderated':
+            console.log(type, data)
+            comments.push(data)
+            await axios.post('http://localhost:5000/events', {
+                type: 'comment_updated',
+                data
+            })
+            break
+        default:
+            break
+    }
 })
 
 app.listen(PORT, () => {
-    console.log(`Server running on PORT ${PORT}`)
+    console.log(`Comments server running on PORT ${PORT}`)
 
 })

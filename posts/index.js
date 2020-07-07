@@ -18,7 +18,6 @@ app.get('/posts', (req, res) => {
 })
 
 app.post('/posts', async (req, res) => {
-    console.log(req.body)
 
     const id = randomBytes(4).toString('hex')
     const { title } = req.body
@@ -38,6 +37,5 @@ app.post('/events', (req, res) => {
 
 
 app.listen('4000', () => {
-    console.log(`Server running on PORT ${PORT}`)
-
+    console.log(`Posts server running on PORT ${PORT}`)
 })
