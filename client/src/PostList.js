@@ -4,10 +4,10 @@ import CommentCreate from './CommentCreate'
 import CommentList from './CommentList'
 
 export default () => {
-  const [posts, setPosts] = useState({})
+  const [posts, setPosts] = useState([])
 
   const fetchPosts = async () => {
-    const res = await axios.get('http://localhost:4000/posts')
+    const res = await axios.get('http://localhost:4002/query')
 
     setPosts(res.data)
   }
@@ -16,18 +16,19 @@ export default () => {
     fetchPosts()
   }, [])
 
-  const renderedPosts = Object.values(posts).map(post => {
+
+
+  const renderedPosts = posts.map(post => {
     return (
       <div
         className="card"
         style={{ width: '30%', marginBottom: '20px' }}
         key={post.id}
       >
-        {console.log(post)
-        }
         <div className="card-body">
           <h3>{post.title}</h3>
-          <CommentList postId={post.id} />
+          {console.log('posts', posts)}
+          <CommentList comments={post.comments} />
           <CommentCreate postId={post.id} />
         </div>
       </div>

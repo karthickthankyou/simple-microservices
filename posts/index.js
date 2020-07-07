@@ -1,14 +1,13 @@
 const express = require('express')
 const cors = require('cors')
 const { randomBytes } = require('crypto')
+const axios = require('axios')
 
 const app = express()
 const PORT = 4000
 
-const posts = [
-    { id: '1', title: 'Karthick is a good writer.' },
-    { id: '2', title: 'Karthick is a good boy.' },
-]
+const posts = []
+
 
 //Middleware
 app.use(cors())
@@ -18,18 +17,23 @@ app.get('/posts', (req, res) => {
     res.send(posts)
 })
 
-app.post('/posts', (req, res) => {
+app.post('/posts', async (req, res) => {
     console.log(req.body)
 
     const id = randomBytes(4).toString('hex')
     const { title } = req.body
 
-    posts.push({ id, title })
+    const data = { id, title }
+
+    posts.push(data)
+    await axios.post('http://localhost:5000/events',
+        { type: 'post_created', data }
+    )
     res.send({ success: true, posts })
 })
 
-app.post('events', (req, res) => {
-    console.log(req)
+app.post('/events', (req, res) => {
+    // console.log(req.body)
 })
 
 

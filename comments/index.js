@@ -1,18 +1,15 @@
 const express = require('express')
 const { randomBytes } = require('crypto')
 const cors = require('cors')
+const axios = require('axios')
 
 const app = express()
 
 const PORT = 4001
 
 //In memory data
-const comments = [
-    { id: '1', postId: '1', text: 'Hey good post ya' },
-    { id: '2', postId: '1', text: 'Hey very nice post ya' },
-    { id: '3', postId: '1', text: 'Hey okay post only ya' },
-    { id: '3', postId: '2', text: 'Mm.. good post!' },
-]
+const comments = []
+
 // Middleware
 app.use(cors())
 app.use(express.json())
@@ -24,17 +21,23 @@ app.get('/posts/:id/comments', (req, res) => {
     res.send(com)
 })
 
-app.post('/posts/:id/comments', (req, res) => {
+app.post('/posts/:id/comments', async (req, res) => {
     const { id: postId } = req.params
     const id = randomBytes(4).toString('hex')
     const { text } = req.body
-    comments.push({ id, text, postId })
+    const data = { id, text, postId }
+    comments.push(data)
+
+    await axios.post('http://localhost:5000/events', {
+        type: 'comment_created',
+        data
+    })
     res.send({ success: true, comments: comments.filter(com => com.postId === postId) })
 
 })
 
-app.post('events', (req, res) => {
-    console.log(req)
+app.post('/events', (req, res) => {
+    // console.log(req.body)
 })
 
 app.listen(PORT, () => {

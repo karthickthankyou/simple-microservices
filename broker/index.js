@@ -12,6 +12,8 @@ app.post('/events', (req, res) => {
     axios.post('http://localhost:4000/events', data)
     axios.post('http://localhost:4001/events', data)
     axios.post('http://localhost:4002/events', data)
+
+    res.send({ success: true })
 })
 
 
